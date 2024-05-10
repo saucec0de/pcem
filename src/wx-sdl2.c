@@ -238,7 +238,7 @@ int dir_exists(char* path)
 
 void get_pcem_path(char *s, int size)
 {
-#ifdef __linux
+#if defined(__linux) || defined(__FreeBSD__)
         wx_get_home_directory(s);
         strcat(s, ".pcem/");
 #else
@@ -399,7 +399,7 @@ void wx_initmenu()
                         wx_appendmenu(cdrom_submenu, IDM_CDROM_REAL+c, s, wxITEM_RADIO);
                 }
         }
-#elif __linux__
+#elif defined(__linux__) || defined(__FreeBSD__)
         wx_appendmenu(cdrom_submenu, IDM_CDROM_REAL+1, "Host CD/DVD Drive (/dev/cdrom)", wxITEM_RADIO);
 #elif __APPLE__
         int c;
@@ -511,7 +511,7 @@ int pc_main(int argc, char** argv)
 {
         paths_init();
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
         char s[1024];
         /* create directories if they don't exist */
         if (!wx_setup(pcem_path))
@@ -538,7 +538,7 @@ int pc_main(int argc, char** argv)
 
         sound_init();
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
         /* check if cfg exists, and if not create it */
         append_filename(s, pcem_path, "pcem.cfg", 511);
         if (!wx_file_exists(s))
@@ -1125,7 +1125,7 @@ int wx_handle_command(void* hwnd, int wParam, int checked)
                         /* Switch from empty to empty. Do nothing. */
                         return 0;
                 }
-                atapi->exit();
+                if (atapi) atapi->exit();
                 atapi_close();
                 ioctl_set_drive(0);
                 old_cdrom_drive = cdrom_drive;
@@ -1148,7 +1148,7 @@ int wx_handle_command(void* hwnd, int wParam, int checked)
                                 update_cdrom_menu(hmenu);
                                 return 0;
                         }
-                        atapi->exit();
+                        if (atapi) atapi->exit();
                         atapi_close();
                         image_open(temp_image_path);
                         cdrom_drive = CDROM_IMAGE;
@@ -1167,7 +1167,7 @@ int wx_handle_command(void* hwnd, int wParam, int checked)
                         return 0;
                 }
                 old_cdrom_drive = cdrom_drive;
-                atapi->exit();
+                if (atapi) atapi->exit();
                 atapi_close();
                 ioctl_set_drive(new_cdrom_drive);
                 cdrom_drive = new_cdrom_drive;

@@ -617,7 +617,7 @@ void speedchanged()
 void closepc()
 {
         codegen_close();
-        atapi->exit();
+        if (atapi) atapi->exit();
 //        ioctl_close();
         dumppic();
 //        output=7;

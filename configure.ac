@@ -60,7 +60,7 @@ case "${host_cpu}" in
     CPU=i386
     AC_MSG_RESULT(${host_cpu})
     ;;
-    x86_64)
+    x86_64|amd64)
     CPU=x86_64
     AC_MSG_RESULT(${host_cpu})
     ;;

@@ -1,0 +1,14 @@
+*.o
+*~
+**/.deps/*
+**/*.cache/
+**/.dirstamp
+config.status
+*.img
+*.core
+Makefile
+config.log
+*.swp
+pcem
+src/pcem
+vram.dmp

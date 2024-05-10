@@ -188,9 +188,9 @@ void *malloc _P((size_t arg));
 void free _P((void *ptr));
 #endif
 
-#ifndef HAVE_INET_ATON
-int inet_aton _P((const char *cp, struct in_addr *ia));
-#endif
+//#ifndef HAVE_INET_ATON
+//int inet_aton _P((const char *cp, struct in_addr *ia));
+//#endif
 
 #include <fcntl.h>
 #ifndef NO_UNIX_SOCKETS

@@ -481,7 +481,7 @@ static int atapi_event_status(uint8_t *buffer)
 	if (buffer[5])
 	{
 		media_status = MS_TRAY_OPEN;
-		atapi->stop();
+		if (atapi) atapi->stop();
 	}
         else
 	{
@@ -494,12 +494,12 @@ static int atapi_event_status(uint8_t *buffer)
 		if (!buffer[4])
 		{
 			event_code = MEC_NEW_MEDIA;
-			atapi->load();
+			if (atapi) atapi->load();
 		}
 		else if (buffer[4]==2)
 		{
 			event_code = MEC_EJECT_REQUESTED;
-			atapi->eject();
+			if (atapi) atapi->eject();
 		}
 	}
 	
@@ -774,7 +774,7 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
         msf = cdb[1] & 2;
 
 	is_error = 0;
-	changed = atapi->medium_changed();
+	if (atapi) changed = atapi->medium_changed();
 
 	/*If UNIT_ATTENTION is set, error out with NOT_READY.
 	  VIDE-CDD.SYS will then issue a READ_TOC, which can pass through UNIT_ATTENTION and will clear sense.
@@ -802,7 +802,7 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
 		return SCSI_PHASE_STATUS;
 	}
 		
-	if ((atapi_cmd_table[cdb[0]] & CHECK_READY) && !atapi->ready())
+	if ((atapi_cmd_table[cdb[0]] & CHECK_READY) && atapi && !atapi->ready())
 	{
 		atapi_cmd_error(data, SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT, 0);
 		return SCSI_PHASE_STATUS;
@@ -815,7 +815,7 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
         }
 	
 	data->prev_status = data->cd_status;
-	data->cd_status = atapi->status();
+	if (atapi) data->cd_status = atapi->status();
 	if (((data->prev_status == CD_STATUS_PLAYING) || (data->prev_status == CD_STATUS_PAUSED)) && ((data->cd_status != CD_STATUS_PLAYING) && (data->cd_status != CD_STATUS_PAUSED)))
 		completed = 1;
 	else
@@ -955,17 +955,17 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
                 {
                         case 0: /*Normal*/
 //			pclog("ATAPI: READ TOC type requested: Normal\n");
-                        len = atapi->readtoc(data->data_in, cdb[6], msf, alloc_length, 0);
+                        if (atapi) len = atapi->readtoc(data->data_in, cdb[6], msf, alloc_length, 0);
                         break;
                         case 1: /*Multi session*/
 //			pclog("ATAPI: READ TOC type requested: Multi-session\n");
-                        len = atapi->readtoc_session(data->data_in, msf, alloc_length);
+                        if (atapi) len = atapi->readtoc_session(data->data_in, msf, alloc_length);
                         data->data_in[0] = 0;
                         data->data_in[1] = 0xA;
                         break;
 			case 2: /*Raw*/
 //			pclog("ATAPI: READ TOC type requested: Raw TOC\n");
-			len = atapi->readtoc_raw(data->data_in, alloc_length);
+			if (atapi) len = atapi->readtoc_raw(data->data_in, alloc_length);
 			break;
                         default:
                         atapi_cmd_error(data, SENSE_ILLEGAL_REQUEST, ASC_LBA_OUT_OF_RANGE, 0);
@@ -1044,7 +1044,7 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
         	if (rcdmode == 0x10)
         	{
                         c = MIN(data->cdlen, MAX_NR_SECTORS);
-                        if (atapi->readsector(data->data_in, data->cdpos, c))
+                        if (atapi && atapi->readsector(data->data_in, data->cdpos, c))
                         {
 //                                pclog("Read sector failed\n");
                                 atapi_cmd_error(data, SENSE_ILLEGAL_REQUEST, ASC_LBA_OUT_OF_RANGE, 0);
@@ -1058,7 +1058,7 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
                 {
                         for (c = 0; c < MAX_NR_SECTORS; c++)
                         {
-        	                atapi->readsector_raw(&data->data_in[c*2352], data->cdpos);
+        	                if (atapi) atapi->readsector_raw(&data->data_in[c*2352], data->cdpos);
 
                                 data->cdpos++;
                                 data->cdlen--;
@@ -1148,7 +1148,7 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
                 
                 readflash_set(READFLASH_HDC, data->id);
                 c = MIN(data->cdlen, MAX_NR_SECTORS);
-                if (atapi->readsector(data->data_in, data->cdpos, c))
+                if (atapi && atapi->readsector(data->data_in, data->cdpos, c))
                 {
 //                        pclog("Read sector failed\n");
                         atapi_cmd_error(data, SENSE_ILLEGAL_REQUEST, ASC_LBA_OUT_OF_RANGE, 0);
@@ -1360,13 +1360,13 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
 
 
 		if ((cdrom_drive < 1) || (data->cd_status <= CD_STATUS_DATA_ONLY) ||
-                    !atapi->is_track_audio(pos, (cdb[0] == GPCMD_PLAY_AUDIO_MSF) ? 1 : 0))
+                    atapi && !atapi->is_track_audio(pos, (cdb[0] == GPCMD_PLAY_AUDIO_MSF) ? 1 : 0))
                 {
                         atapi_cmd_error(data, SENSE_ILLEGAL_REQUEST, ASC_ILLEGAL_MODE_FOR_THIS_TRACK, 0);
                         return SCSI_PHASE_STATUS;
                 }
 				
-                atapi->playaudio(pos, len, (cdb[0] == GPCMD_PLAY_AUDIO_MSF) ? 1 : 0);
+                if (atapi) atapi->playaudio(pos, len, (cdb[0] == GPCMD_PLAY_AUDIO_MSF) ? 1 : 0);
                 data->cmd_pos = CMD_POS_IDLE;
                 return SCSI_PHASE_STATUS;
                 
@@ -1382,7 +1382,7 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
                 data->data_in[pos++] = 0; /*Audio status*/
                 data->data_in[pos++] = 0; data->data_in[pos++] = 0; /*Subchannel length*/
                 data->data_in[pos++] = 1; /*Format code*/
-                data->data_in[1] = atapi->getcurrentsubchannel(&data->data_in[5], msf);
+                if (atapi) data->data_in[1] = atapi->getcurrentsubchannel(&data->data_in[5], msf);
 //                pclog("Read subchannel complete - audio status %02X\n",idebufferb[1]);
                 len = 11+5;
                 if (!(cdb[2] & 0x40)) len=4;
@@ -1391,9 +1391,9 @@ static int scsi_cd_command(uint8_t *cdb, void *p)
 		return alloc_length ? SCSI_PHASE_DATA_IN : SCSI_PHASE_STATUS;
 
                 case GPCMD_START_STOP_UNIT:
-                if (!cdb[4])          atapi->stop();
-                else if (cdb[4] == 2) atapi->eject();
-                else if (cdb[4] == 3) atapi->load();
+                if (!cdb[4])          { if (atapi) atapi->stop(); }
+                else if (cdb[4] == 2) { if (atapi) atapi->eject();}
+                else if (cdb[4] == 3) { if (atapi) atapi->load(); }
                 data->cmd_pos = CMD_POS_IDLE;
                 return SCSI_PHASE_STATUS;
 
@@ -1495,8 +1495,8 @@ atapi_out:
                 return SCSI_PHASE_STATUS;
 
                 case GPCMD_PAUSE_RESUME:
-                if (cdb[8] & 1) atapi->resume();
-                else            atapi->pause();
+                if (cdb[8] & 1) { if (atapi) atapi->resume(); }
+                else            { if (atapi) atapi->pause();  }
                 data->cmd_pos = CMD_POS_IDLE;
                 return SCSI_PHASE_STATUS;
 
@@ -1508,7 +1508,7 @@ atapi_out:
                         
                 	data->cdpos = (cdb[3] << 16) | (cdb[4] << 8) | cdb[5];
                 	
-                	atapi->seek(data->cdpos);
+                	if (atapi) atapi->seek(data->cdpos);
 
                         seek_time = get_seek_time(data, old_pos, data->cdpos);
                         if (seek_time)
@@ -1524,7 +1524,7 @@ atapi_out:
                 return SCSI_PHASE_STATUS;
 
                 case GPCMD_READ_CDROM_CAPACITY:
-                size = atapi->size();
+                if (atapi) size = atapi->size();
                 scsi_add_data(data, (size >> 24) & 0xff);
                 scsi_add_data(data, (size >> 16) & 0xff);
                 scsi_add_data(data, (size >> 8) & 0xff);
@@ -1538,7 +1538,7 @@ atapi_out:
                 return SCSI_PHASE_DATA_IN;
 
                 case GPCMD_STOP_PLAY_SCAN:
-                atapi->stop();
+                if (atapi) atapi->stop();
                 data->cmd_pos = CMD_POS_IDLE;
                 return SCSI_PHASE_STATUS;
 
