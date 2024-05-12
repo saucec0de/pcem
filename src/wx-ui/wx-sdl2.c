@@ -329,7 +329,7 @@ void wx_initmenu() {
                         wx_appendmenu(cdrom_submenu, IDM_CDROM_REAL + c, s, wxITEM_RADIO);
                 }
         }
-#elif __linux__
+#elif defined(__linux__) || defined(__FreeBSD__)
         wx_appendmenu(cdrom_submenu, IDM_CDROM_REAL + 1, "Host CD/DVD Drive (/dev/cdrom)", wxITEM_RADIO);
 #elif __APPLE__
         int c;
@@ -910,8 +910,8 @@ int wx_handle_command(void *hwnd, int wParam, int checked) {
                         /* Switch from empty to empty. Do nothing. */
                         return 0;
                 }
-                atapi->exit();
-                atapi_close();
+                if (atapi) atapi->exit();
+                if (atapi) atapi_close();
                 ioctl_set_drive(0);
                 old_cdrom_drive = cdrom_drive;
                 cdrom_drive = 0;
@@ -926,8 +926,8 @@ int wx_handle_command(void *hwnd, int wParam, int checked) {
                                 update_cdrom_menu(hmenu);
                                 return 0;
                         }
-                        atapi->exit();
-                        atapi_close();
+                        if (atapi) atapi->exit();
+                        if (atapi) atapi_close();
                         image_open(temp_image_path);
                         cdrom_drive = CDROM_IMAGE;
                         saveconfig(NULL);
@@ -942,8 +942,8 @@ int wx_handle_command(void *hwnd, int wParam, int checked) {
                         return 0;
                 }
                 old_cdrom_drive = cdrom_drive;
-                atapi->exit();
-                atapi_close();
+                if (atapi) atapi->exit();
+                if (atapi) atapi_close();
                 ioctl_set_drive(new_cdrom_drive);
                 cdrom_drive = new_cdrom_drive;
                 saveconfig(NULL);

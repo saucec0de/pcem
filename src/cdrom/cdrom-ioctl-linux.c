@@ -1,6 +1,8 @@
 /*Linux CD-ROM support via IOCTL*/
 
+#if defined(__linux__)
 #include <linux/cdrom.h>
+#endif
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <stdlib.h>

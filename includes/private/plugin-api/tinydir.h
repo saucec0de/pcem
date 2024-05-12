@@ -113,7 +113,7 @@ struct _wfinddata_t {
 #if (defined _MSC_VER || defined __MINGW32__)
 #include <windows.h>
 #define _TINYDIR_PATH_MAX MAX_PATH
-#elif defined __linux__
+#elif defined(__linux__) || defined(__FreeBSD__)
 #include <limits.h>
 #ifdef PATH_MAX
 #define _TINYDIR_PATH_MAX PATH_MAX

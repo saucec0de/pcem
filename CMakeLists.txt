@@ -50,6 +50,13 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         message("Force X11 Mode on Wayland Systems: ${FORCE_X11}")
 endif()
 
+if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+        option(USE_ALSA "Build PCem with MIDI output using ALSA" OFF)
+        message("ALSA MIDI Support: ${USE_ALSA}")
+        option(FORCE_X11 "Force X11 Mode on Wayland Systems" ON)
+        message("Force X11 Mode on Wayland Systems: ${FORCE_X11}")
+endif()
+
 option(USE_EXPERIMENTAL "Build PCem with experimental code" OFF)
 message("Experimental Modules: ${USE_EXPERIMENTAL}")
 

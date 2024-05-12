@@ -1,4 +1,4 @@
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 #include <sys/mman.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -35,7 +35,7 @@ void codegen_allocator_init() {
                                MAP_ANON | MAP_PRIVATE | MAP_JIT, 0, 0);
 #else
         mem_block_alloc =
-                mmap(0, MEM_BLOCK_NR * MEM_BLOCK_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, 0, 0);
+                mmap(0, MEM_BLOCK_NR * MEM_BLOCK_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, -1, 0);
 #endif
 
         for (c = 0; c < MEM_BLOCK_NR; c++) {

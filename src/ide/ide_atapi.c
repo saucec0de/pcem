@@ -93,9 +93,10 @@ static int wait_for_bus(scsi_bus_t *bus, int state, int req_needed) {
 }
 
 void atapi_command_start(atapi_device_t *atapi, uint8_t features) {
-        scsi_bus_t *bus = &atapi->bus;
+        scsi_bus_t *bus;
+        if (atapi) bus = &atapi->bus;
 
-        atapi->use_dma = features & 1;
+        if (atapi) atapi->use_dma = features & 1;
 
         scsi_bus_update(bus, BUS_SEL | BUS_SETDATA(1 << 0));
         if (!(scsi_bus_read(bus) & BUS_BSY))
@@ -109,8 +110,8 @@ void atapi_command_start(atapi_device_t *atapi, uint8_t features) {
         if (!wait_for_bus(bus, BUS_CD, 1))
                 fatal("Device failed to request command\n");
 
-        atapi->state = ATAPI_STATE_COMMAND;
-        atapi->command_pos = 0;
+        if (atapi) atapi->state = ATAPI_STATE_COMMAND;
+        if (atapi) atapi->command_pos = 0;
 }
 
 uint8_t atapi_read_iir(atapi_device_t *atapi_dev) {
@@ -491,7 +492,7 @@ void atapi_process_packet(atapi_device_t *atapi_dev) {
 }
 
 void atapi_reset(atapi_device_t *atapi_dev) {
-        pclog("atapi_reset\n");
+        //pclog("atapi_reset\n");
         atapi_dev->state = ATAPI_STATE_IDLE;
         atapi_dev->command_pos = 0;
         atapi_dev->data_read_pos = 0;

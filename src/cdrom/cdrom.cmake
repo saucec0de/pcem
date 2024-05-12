@@ -15,6 +15,12 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
                 )
 endif()
 
+if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+        set(PCEM_SRC ${PCEM_SRC} ${PCEM_SRC_CDROM}
+                cdrom/cdrom-ioctl-dummy.c
+                )
+endif()
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         set(PCEM_SRC ${PCEM_SRC} ${PCEM_SRC_CDROM}
                 cdrom/cdrom-ioctl.c

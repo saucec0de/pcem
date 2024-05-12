@@ -90,3 +90,14 @@ else()
                 sound/sdl2-midi.c
                 )
 endif()
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD" AND USE_ALSA)
+        set(PCEM_SRC ${PCEM_SRC}
+                sound/midi_alsa.c
+                )
+        set(PCEM_ADDITIONAL_LIBS ${PCEM_ADDITIONAL_LIBS} ${ALSA_LIBRARIES})
+else()
+        set(PCEM_SRC ${PCEM_SRC}
+                sound/sdl2-midi.c
+                )
+endif()

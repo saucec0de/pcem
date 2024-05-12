@@ -11,7 +11,7 @@
 #include "x86.h"
 #include "x87.h"
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 #include <sys/mman.h>
 #include <unistd.h>
 #endif
@@ -26,8 +26,7 @@ void *codegen_mem_load_quad;
 void *codegen_mem_load_single;
 void *codegen_mem_load_double;
 
-void *codegen_mem_store_byte;
-void *codegen_mem_store_word;
+void *codegen_mem_store_byte; void *codegen_mem_store_word;
 void *codegen_mem_store_long;
 void *codegen_mem_store_quad;
 void *codegen_mem_store_single;

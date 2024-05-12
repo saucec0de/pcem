@@ -1,7 +1,7 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 #include <fcntl.h>  // for open
 #include <unistd.h> // for close
 #endif

@@ -157,7 +157,7 @@ void img_load(int drive, char *fn) {
         img[drive].sides = 2;
         img[drive].sector_size = 512;
 
-        pclog("BPB reports %i sides and %i bytes per sector\n", bpb_sides, bpb_bps);
+        //pclog("BPB reports %i sides and %i bytes per sector\n", bpb_sides, bpb_bps);
 
         if (bpb_disable || (bpb_sides < 1) || (bpb_sides > 2) || (bpb_bps < 128) || (bpb_bps > 2048)) {
                 /* The BPB is giving us a wacky number of sides and/or bytes per sector, therefore it is most probably
@@ -223,7 +223,7 @@ void img_load(int drive, char *fn) {
                 /* Now we calculate bytes per track, which is bpb_sectors * bpb_bps. */
                 bpt = (uint32_t)bpb_sectors * (uint32_t)bpb_bps;
                 /* Now we should be able to calculate the bit rate. */
-                pclog("The image has %i bytes per track\n", bpt);
+                //pclog("The image has %i bytes per track\n", bpt);
                 if (bpt <= 6250)
                         bit_rate_300 = 250; /* Double-density */
                 else if (bpt <= 7500)
@@ -244,7 +244,7 @@ void img_load(int drive, char *fn) {
                         max_spt = 45;
                 } else /* Image too big, eject */
                 {
-                        pclog("Image has more than 25000 bytes per track, ejecting...\n");
+                        //pclog("Image has more than 25000 bytes per track, ejecting...\n");
                         fclose(img[drive].f);
                         return;
                 }
@@ -311,11 +311,11 @@ void img_load(int drive, char *fn) {
         disc_sector_writeback[drive] = img_writeback;
 
         img[drive].bitcell_period_300rpm = 1000000.0 / bit_rate_300 * 2.0;
-        pclog("bit_rate_300=%g\n", bit_rate_300);
-        pclog("bitcell_period_300=%g\n", img[drive].bitcell_period_300rpm);
-        //        img[drive].bitcell_period_300rpm = disc_get_bitcell_period(img[drive].rate);
-        pclog("img_load %d %p sectors=%i tracks=%i sides=%i sector_size=%i hole=%i\n", drive, drives, img[drive].sectors,
-              img[drive].tracks, img[drive].sides, img[drive].sector_size, img[drive].hole);
+        //pclog("bit_rate_300=%g\n", bit_rate_300);
+        //pclog("bitcell_period_300=%g\n", img[drive].bitcell_period_300rpm);
+        ////        img[drive].bitcell_period_300rpm = disc_get_bitcell_period(img[drive].rate);
+        //pclog("img_load %d %p sectors=%i tracks=%i sides=%i sector_size=%i hole=%i\n", drive, drives, img[drive].sectors,
+        //      img[drive].tracks, img[drive].sides, img[drive].sector_size, img[drive].hole);
 }
 
 int img_hole(int drive) { return img[drive].hole; }
@@ -334,13 +334,13 @@ void img_seek(int drive, int track) {
 
         if (!img[drive].f)
                 return;
-        pclog("Seek drive=%i track=%i sectors=%i sector_size=%i sides=%i\n", drive, track, img[drive].sectors,
-              img[drive].sector_size, img[drive].sides);
+        //pclog("Seek drive=%i track=%i sectors=%i sector_size=%i sides=%i\n", drive, track, img[drive].sectors,
+        //      img[drive].sector_size, img[drive].sides);
         //        pclog("  %i %i\n", drive_type[drive], img[drive].tracks);
         if (img[drive].tracks <= 41 && fdd_doublestep_40(drive))
                 track /= 2;
 
-        pclog("Disk seeked to track %i\n", track);
+        //pclog("Disk seeked to track %i\n", track);
         disc_track[drive] = track;
 
         if (img[drive].sides == 2) {

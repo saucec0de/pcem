@@ -23,7 +23,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/wx-ui)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/wx-ui/wx-resources.cpp
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/wx-ui/pc.xrc
-        COMMAND wxrc
+        COMMAND wxrc-3.2
         ARGS -c ${CMAKE_CURRENT_SOURCE_DIR}/wx-ui/pc.xrc -o ${CMAKE_CURRENT_BINARY_DIR}/wx-ui/wx-resources.cpp)
 
 set(PCEM_SRC ${PCEM_SRC}
@@ -62,6 +62,12 @@ if(USE_NETWORKING)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        set(PCEM_SRC ${PCEM_SRC}
+                wx-ui/wx-sdl2-display.c
+                )
+endif()
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
         set(PCEM_SRC ${PCEM_SRC}
                 wx-ui/wx-sdl2-display.c
                 )

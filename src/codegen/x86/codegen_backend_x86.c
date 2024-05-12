@@ -11,7 +11,7 @@
 #include "codegen_reg.h"
 #include "x86.h"
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 #include <sys/mman.h>
 #include <unistd.h>
 #endif
@@ -244,33 +244,33 @@ static void build_loadstore_routines(codeblock_t *block) {
 void codegen_backend_init() {
         codeblock_t *block;
         int c;
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
         void *start;
         size_t len;
         long pagesize = sysconf(_SC_PAGESIZE);
         long pagemask = ~(pagesize - 1);
 #endif
-        pclog("sizeof(codeblock_t)=%i\n", sizeof(codeblock_t));
-        pclog("  offsetof(codeblock_t, pc)=%i\n", offsetof(codeblock_t, pc));
-        pclog("  offsetof(codeblock_t, _cs)=%i\n", offsetof(codeblock_t, _cs));
-        pclog("  offsetof(codeblock_t, phys)=%i\n", offsetof(codeblock_t, phys));
-        pclog("  offsetof(codeblock_t, phys_2)=%i\n", offsetof(codeblock_t, phys_2));
-        pclog("  offsetof(codeblock_t, status)=%i\n", offsetof(codeblock_t, status));
-        pclog("  offsetof(codeblock_t, flags)=%i\n", offsetof(codeblock_t, flags));
-        pclog("  offsetof(codeblock_t, ins)=%i\n", offsetof(codeblock_t, ins));
-        pclog("  offsetof(codeblock_t, TOP)=%i\n", offsetof(codeblock_t, TOP));
-        pclog("  offsetof(codeblock_t, parent)=%i\n", offsetof(codeblock_t, parent));
-        pclog("  offsetof(codeblock_t, left)=%i\n", offsetof(codeblock_t, left));
-        pclog("  offsetof(codeblock_t, right)=%i\n", offsetof(codeblock_t, right));
-        pclog("  offsetof(codeblock_t, data)=%i\n", offsetof(codeblock_t, data));
-        pclog("  offsetof(codeblock_t, page_mask)=%i\n", offsetof(codeblock_t, page_mask));
-        pclog("  offsetof(codeblock_t, page_mask2)=%i\n", offsetof(codeblock_t, page_mask2));
-        pclog("  offsetof(codeblock_t, dirty_mask)=%i\n", offsetof(codeblock_t, dirty_mask));
-        pclog("  offsetof(codeblock_t, dirty_mask2)=%i\n", offsetof(codeblock_t, dirty_mask2));
-        pclog("  offsetof(codeblock_t, prev)=%i\n", offsetof(codeblock_t, prev));
-        pclog("  offsetof(codeblock_t, next)=%i\n", offsetof(codeblock_t, next));
-        pclog("  offsetof(codeblock_t, prev_2)=%i\n", offsetof(codeblock_t, prev_2));
-        pclog("  offsetof(codeblock_t, next_2)=%i\n", offsetof(codeblock_t, next_2));
+        //pclog("sizeof(codeblock_t)=%i\n", sizeof(codeblock_t));
+        //pclog("  offsetof(codeblock_t, pc)=%i\n", offsetof(codeblock_t, pc));
+        //pclog("  offsetof(codeblock_t, _cs)=%i\n", offsetof(codeblock_t, _cs));
+        //pclog("  offsetof(codeblock_t, phys)=%i\n", offsetof(codeblock_t, phys));
+        //pclog("  offsetof(codeblock_t, phys_2)=%i\n", offsetof(codeblock_t, phys_2));
+        //pclog("  offsetof(codeblock_t, status)=%i\n", offsetof(codeblock_t, status));
+        //pclog("  offsetof(codeblock_t, flags)=%i\n", offsetof(codeblock_t, flags));
+        //pclog("  offsetof(codeblock_t, ins)=%i\n", offsetof(codeblock_t, ins));
+        //pclog("  offsetof(codeblock_t, TOP)=%i\n", offsetof(codeblock_t, TOP));
+        //pclog("  offsetof(codeblock_t, parent)=%i\n", offsetof(codeblock_t, parent));
+        //pclog("  offsetof(codeblock_t, left)=%i\n", offsetof(codeblock_t, left));
+        //pclog("  offsetof(codeblock_t, right)=%i\n", offsetof(codeblock_t, right));
+        //pclog("  offsetof(codeblock_t, data)=%i\n", offsetof(codeblock_t, data));
+        //pclog("  offsetof(codeblock_t, page_mask)=%i\n", offsetof(codeblock_t, page_mask));
+        //pclog("  offsetof(codeblock_t, page_mask2)=%i\n", offsetof(codeblock_t, page_mask2));
+        //pclog("  offsetof(codeblock_t, dirty_mask)=%i\n", offsetof(codeblock_t, dirty_mask));
+        //pclog("  offsetof(codeblock_t, dirty_mask2)=%i\n", offsetof(codeblock_t, dirty_mask2));
+        //pclog("  offsetof(codeblock_t, prev)=%i\n", offsetof(codeblock_t, prev));
+        //pclog("  offsetof(codeblock_t, next)=%i\n", offsetof(codeblock_t, next));
+        //pclog("  offsetof(codeblock_t, prev_2)=%i\n", offsetof(codeblock_t, prev_2));
+        //pclog("  offsetof(codeblock_t, next_2)=%i\n", offsetof(codeblock_t, next_2));
         codeblock = malloc(BLOCK_SIZE * sizeof(codeblock_t));
         codeblock_hash = malloc(HASH_SIZE * sizeof(codeblock_t *));
 

@@ -765,23 +765,23 @@ void callbackide(int ide_board) {
                 ide->reset = ide_other->reset = 0;
                 if (IDE_DRIVE_IS_CDROM(ide)) {
                         ide->cylinder = 0xEB14;
-                        atapi->stop();
+                        if (atapi) atapi->stop();
                         atapi_reset(&ide->atapi);
                 }
                 if (ide->type == IDE_NONE) {
                         ide->cylinder = 0xFFFF;
                         ide->error = 0xff;
-                        atapi->stop();
+                        if (atapi) atapi->stop();
                 }
                 if (IDE_DRIVE_IS_CDROM(ide_other)) {
                         ide_other->cylinder = 0xEB14;
-                        atapi->stop();
+                        if (atapi) atapi->stop();
                         atapi_reset(&ide_other->atapi);
                 }
                 if (ide_other->type == IDE_NONE) {
                         ide_other->cylinder = 0xFFFF;
                         ide_other->error = 0xff;
-                        atapi->stop();
+                        if (atapi) atapi->stop();
                 }
                 //                pclog("Reset callback\n");
                 return;

@@ -105,4 +105,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/docs/configs.txt DESTINATION ${PCEM_SHARE_DIR}
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	install(FILES ${CMAKE_SOURCE_DIR}/docs/pcem.man.1 DESTINATION share/man/man1 RENAME pcem.1)
 endif()
+if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+	install(FILES ${CMAKE_SOURCE_DIR}/docs/pcem.man.1 DESTINATION share/man/man1 RENAME pcem.1)
+endif()
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/includes/public/ DESTINATION ${PCEM_INCLUDE_DIR} FILES_MATCHING PATTERN *.h)

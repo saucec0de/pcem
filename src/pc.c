@@ -485,7 +485,7 @@ void runpc() {
         framecountx++;
         framecount++;
         if (framecountx >= 100) {
-                pclog("onesec\n");
+                //pclog("onesec\n");
                 framecountx = 0;
                 mips = (float)insc / 1000000.0f;
                 insc = 0;
@@ -564,7 +564,7 @@ void speedchanged() {
 
 void closepc() {
         codegen_close();
-        atapi->exit();
+        if (atapi) atapi->exit();
         //        ioctl_close();
         dumppic();
         //        output=7;

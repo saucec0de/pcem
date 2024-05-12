@@ -8,7 +8,7 @@
 #ifndef _VID_VOODOO_CODEGEN_X86_64_H_
 #define _VID_VOODOO_CODEGEN_X86_64_H_
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 #include <sys/mman.h>
 #include <unistd.h>
 #endif
@@ -3222,7 +3222,7 @@ void voodoo_codegen_init(voodoo_t *voodoo) {
         voodoo->codegen_data = VirtualAlloc(NULL, sizeof(voodoo_x86_data_t) * BLOCK_NUM * 4, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 #else
         voodoo->codegen_data = mmap(0, sizeof(voodoo_x86_data_t) * BLOCK_NUM * 4, PROT_READ | PROT_WRITE | PROT_EXEC,
-                                    MAP_ANON | MAP_PRIVATE, 0, 0);
+                                    MAP_ANON | MAP_PRIVATE, -1, 0);
 #endif
 
         for (c = 0; c < 256; c++) {
